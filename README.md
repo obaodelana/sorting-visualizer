@@ -23,7 +23,7 @@ I wrote the sorting functions normally while adding a delay in each iteration. T
 - Quick sort: Also a divide and conquer recursive algorithm 😑. Picks an element (last element) as the pivot and puts all smaller items on the left and bigger items on the right. It does the same thing for the left and right hand side of the pivot until one item is left on both sides.
 
 ## Testing or building
-- [You can access it online](https://obaodelana.github.io/sorting-visualizer/Web/pictureSortingVisualizer.html)
+- [You can access it online](https://obaodelana.github.io/sorting-visualizer/Web/pictureSortingVisualizer.html) (reload the page until it shows 😁)
 - Or
     - Clone the repo
     - If you're on Linux, run `./pictureSortingVisualizer`
