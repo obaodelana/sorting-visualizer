@@ -1,21 +1,20 @@
 #include "raylib.h"
 #include "main.h"
 
-// Sort indices
-#define BUBBLESORT 0
-#define COMBSORT 1
-#define SELECTIONSORT 2
-#define DSELECTIONSORT 3
-#define INSERTIONSORT 4
-#define MERGESORT 5
-#define QUICKSORT 6
-
 // Stores individual tile data
 typedef struct PictureTile
 {
-    Vector2 picturePos, actualPos;
+	// Stores the position of the tile in the sprite sheet (whole image)
+    Vector2 picturePos;
+	// Stores the position of the tile on the screen
+	Vector2 actualPos;
+	// Index of tile (for sorting purposes)
     int index;
 } PictureTile;
 
 // List of tiles
 extern PictureTile tilePositions[tilesNo];
+
+void GetImage(void);
+void DrawImageTiles(void);
+void FreeImage(void);

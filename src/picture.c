@@ -1,12 +1,8 @@
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include "picture.h"
-
-// Sort started
-bool threadStarted = false;
-
-static pthread_t threadID;
+#include "sort.h"
 
 static Texture2D picture = {0};
 
@@ -57,60 +53,6 @@ static void SetTilePositions(void)
     ShufflePositions();
 }
 
-void CallSort(int algoIndex)
-{
-    // Disallow from starting a new thread when one has started
-    if (!threadStarted)
-    {
-        threadStarted = true;
-
-        // Pointer to algorithm function (default to bubble sort)
-        void (*SortAlgo) (void*) = BubbleSort;
-
-        // Choose algroithm based on index
-        switch (algoIndex)
-        {
-            case COMBSORT:
-                SortAlgo = CombSort;
-                break;
-
-            case SELECTIONSORT:
-                SortAlgo = SelectionSort;
-                break;
-
-            case DSELECTIONSORT:
-                SortAlgo = DoubleSelectionSort;
-                break;
-
-            case INSERTIONSORT:
-                SortAlgo = InsertionSort;
-                break;
-                
-            case MERGESORT:
-                SortAlgo = MergeSort;
-                break;
-
-            case QUICKSORT:
-                SortAlgo = QuickSort;
-                break;
-        }
-        
-        int *args = NULL;
-        // Pass parameters for Merge and Quick Sort only
-        if (algoIndex == MERGESORT || algoIndex == QUICKSORT)
-        {
-            // Allocate memory for two integers and initialize them to zero
-            args = calloc(2, sizeof(int));
-            // Set the value of the second item to end of tilePosition array
-            args[1] = tilesNo - 1;
-        }
-        // Start thread with chosen function
-        pthread_create(&threadID, NULL, (void *) *SortAlgo, (void *) args);
-
-        StartTimer();
-    }
-}
-
 // Draw image tiles at correct x and y positions
 void DrawImageTiles(void)
 {
@@ -120,13 +62,13 @@ void DrawImageTiles(void)
         {
             // Get 1D index
             int index = (y * horizontalTiles) + x;
-            // Width, height and position of current tile (position gotten from tilePositions array)
+            // Width, height and position of current image in tile sheet
             Rectangle tileRec = (Rectangle) {.width = tileSize, .height = tileSize, .x = tilePositions[index].picturePos.x, .y = tilePositions[index].picturePos.y};
             // Position on the screen
             Vector2 tilePos = (Vector2) {x * tileSize, y * tileSize};
             // Draw individual image tile
             DrawTextureRec(picture, tileRec, tilePos, WHITE);
-            // Draw index number
+            // Draw index number on top of image tile
             DrawText(TextFormat("%i", tilePositions[index].index + 1), tilePos.x + (tileSize / 2), tilePos.y + (tileSize / 2), 15, RAYWHITE);
             
             // Shuffling changes the [actualPos] of each tile
@@ -136,7 +78,7 @@ void DrawImageTiles(void)
                 if (y == verticalTiles - 1 && x == horizontalTiles - 1)
                     updatedTilePos = false;
                 
-                // Set the new actual position on the screen of each tile
+                // Set the new position on the screen of each tile
                 tilePositions[index].actualPos = (Vector2) {tilePos.x, tilePos.y};
             }
         }
