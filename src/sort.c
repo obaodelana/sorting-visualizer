@@ -1,9 +1,13 @@
 #include <time.h>
 #include <stdlib.h>
 #include <math.h>
-#include "h/main.h"
+#include <pthread.h>
+#include "raylib.h"
+#include "sort.h"
+#include "main.h"
+#include "picture.h"
 
-bool shuffled = false;
+bool updatedTilePos = false;
 
 // Timer stuff
 static bool timerStarted = false;
@@ -13,9 +17,6 @@ static clock_t startTime = 0;
 // Array for drawing boxes
 static Vector2 boxes[tilesNo * 2];
 static Color boxColors[tilesNo * 2];
-
-// Function prototype
-static void DrawBoxesV(Vector2 *v, Color *c, int len);
 
 static void SwapItems(PictureTile *one, PictureTile *two)
 {
@@ -67,7 +68,7 @@ void ShufflePositions(void)
         SwapItems(&tilePositions[i], &tilePositions[r]);
     }
 
-    shuffled = true;
+    updatedTilePos = true;
 }
 
 void StartTimer(void)
@@ -80,6 +81,31 @@ void StartTimer(void)
     startTime = clock();
 }
 
+// Easier way of setting boxes position and color
+static void SetupBoxes(Vector2 *v, Color *c, int len)
+{
+    // Set vectors and colors the amount of times inputted
+    for (int i = 0; i < len; i++)
+    {
+        boxes[i] = v[i];
+        boxColors[i] = c[i];
+    }
+}
+
+void DrawBoxes(void)
+{
+    // Draw boxes until color is null
+    for (int i = 0; boxColors[i].a != 0; i++)
+    {
+        // Get current color
+        Color currentColor = boxColors[i];
+        // Reduce opacity
+        currentColor.a = 150;
+        // Draw a rectangle at specified position with specified color
+        DrawRectangleV(boxes[i], (Vector2) {tileSize, tileSize}, currentColor);
+    }
+}
+
 static void ClearDrawingBoxes(void)
 {
     // Stop drawing boxes
@@ -88,6 +114,22 @@ static void ClearDrawingBoxes(void)
         boxes[i] = (Vector2) {0.0f, 0.0f};
         boxColors[i] = (Color) {0, 0, 0, 0};
     }
+}
+
+void DrawTimer(void)
+{
+    // If the timer is running
+    if (timerStarted)
+        // Timer is equal to current time minus start time
+        timer = (float) (clock() - startTime) / CLOCKS_PER_SEC;
+    
+    // Setup timer text
+    const char *timeText = TextFormat("Time: %.2fs", timer);
+    // Measure width of string
+    int textWidth = MeasureText(timeText, 15) / 2;
+
+    // Draw text at the middle horizontally and 50 above the screen height
+    DrawText(timeText, screenWidth / 2 - textWidth, screenHeight - 50, 15, RAYWHITE);
 }
 
 static void EndSort(void)
@@ -107,7 +149,7 @@ static void EndSort(void)
 
     ClearDrawingBoxes();
 
-    shuffled = true;
+    updatedTilePos = true;
 
     // End thread
     threadStarted = false;
@@ -177,7 +219,7 @@ void CombSort(void *arg)
         {
             // Draw boxes at i index and (gap + i) index
             Vector2 vecs[] = {tilePositions[i].actualPos, tilePositions[i + gap].actualPos};
-            DrawBoxesV(vecs, (Color[]) {BLUE, PURPLE}, 2);
+            SetupBoxes(vecs, (Color[]) {BLUE, PURPLE}, 2);
 
             // If current item is greater than (gap + i) item
             if (tilePositions[i].index > tilePositions[i + gap].index)
@@ -214,7 +256,7 @@ void SelectionSort(void* arg)
     
             // Draw boxes at current index (j) and min index
             Vector2 vecs[] = {tilePositions[j].actualPos, tilePositions[minIndex].actualPos};
-            DrawBoxesV(vecs, (Color[]) {BLUE, PURPLE}, 2);
+            SetupBoxes(vecs, (Color[]) {BLUE, PURPLE}, 2);
 
             Delay(sortDelay);
         }
@@ -245,7 +287,7 @@ void DoubleSelectionSort(void *arg)
         {
             // Draw boxes at current index (j), max index and min index
             Vector2 vecs[] = {tilePositions[j].actualPos, tilePositions[maxIndex].actualPos, tilePositions[minIndex].actualPos};
-            DrawBoxesV(vecs, (Color[]){BLUE, PINK, PURPLE}, 3);
+            SetupBoxes(vecs, (Color[]){BLUE, PINK, PURPLE}, 3);
 
             // If current j is less than smallest index
             if (tilePositions[j].index < tilePositions[minIndex].index)
@@ -447,44 +489,3 @@ void QuickSort(void *arg)
     }
 }
 //---------------------
-
-// Easier way of setting boxes position and color
-static void DrawBoxesV(Vector2 *v, Color *c, int len)
-{
-    // Set vectors and colors the amount of times inputted
-    for (int i = 0; i < len; i++)
-    {
-        boxes[i] = v[i];
-        boxColors[i] = c[i];
-    }
-}
-
-void DrawBoxes(void)
-{
-    // Draw boxes until color is null
-    for (int i = 0; boxColors[i].a != 0; i++)
-    {
-        // Get current color
-        Color currentColor = boxColors[i];
-        // Reduce opacity
-        currentColor.a = 150;
-        // Draw a rectangle at specified position with specified color
-        DrawRectangleV(boxes[i], (Vector2) {tileSize, tileSize}, currentColor);
-    }
-}
-
-void DrawTimer(void)
-{
-    // If the timer is running
-    if (timerStarted)
-        // Timer is equal to current time minus start time
-        timer = (float) (clock() - startTime) / CLOCKS_PER_SEC;
-    
-    // Setup timer text
-    const char *timeText = TextFormat("Time: %.2fs", timer);
-    // Measure width of string
-    int textWidth = MeasureText(timeText, 15) / 2;
-
-    // Draw text at the middle horizontally and 50 above the screen heigth
-    DrawText(timeText, screenWidth / 2 - textWidth, screenHeight - 50, 15, RAYWHITE);
-}

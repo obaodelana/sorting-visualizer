@@ -1,5 +1,7 @@
+#include <string.h>
 #include <stdlib.h>
-#include "h/main.h"
+#include <pthread.h>
+#include "picture.h"
 
 // Sort started
 bool threadStarted = false;
@@ -11,24 +13,16 @@ static Texture2D picture = {0};
 // Array of positions of picture tiles
 PictureTile tilePositions[horizontalTiles * verticalTiles];
 
-// Function prototype
 static void SetTilePositions(void);
 
 void GetImage(void)
 {
-    // If a picture is already open
-    if (picture.height > 0)
-        // Close it
-        UnloadTexture(picture);
+    // If a picture is already open, close it
+    if (picture.height > 0) UnloadTexture(picture);
 
-    char imgPath[512];
-    // If external image path is not empty
-    if (strlen(imagePath) > 0)
-        // Copy external image path to local variable
-        strcpy(imgPath, imagePath);
-    else
-        // Get a random image from the resources folder 
-        sprintf(imgPath, "resources/%d.png", GetRandomValue(1, 10));
+    char imgPath[512 + 1];
+	// Get a random image from the resources folder 
+	sprintf(imgPath, "resources/%d.png", GetRandomValue(1, 10));
 
     // Load image
     Image img = LoadImage(imgPath);
@@ -42,6 +36,7 @@ void GetImage(void)
     SetTilePositions();
 }
 
+// Setup [tilePositions]
 static void SetTilePositions(void)
 {
     // Go through height and width of image
@@ -68,8 +63,6 @@ void CallSort(int algoIndex)
     if (!threadStarted)
     {
         threadStarted = true;
-
-        StartTimer();
 
         // Pointer to algorithm function (default to bubble sort)
         void (*SortAlgo) (void*) = BubbleSort;
@@ -113,12 +106,14 @@ void CallSort(int algoIndex)
         }
         // Start thread with chosen function
         pthread_create(&threadID, NULL, (void *) *SortAlgo, (void *) args);
+
+        StartTimer();
     }
 }
 
+// Draw image tiles at correct x and y positions
 void DrawImageTiles(void)
 {
-    // Go through height and width of image
     for (int y = 0; y < verticalTiles; y++)
     {
         for (int x = 0; x < horizontalTiles; x++)
@@ -134,14 +129,14 @@ void DrawImageTiles(void)
             // Draw index number
             DrawText(TextFormat("%i", tilePositions[index].index + 1), tilePos.x + (tileSize / 2), tilePos.y + (tileSize / 2), 15, RAYWHITE);
             
-            // If shuffled
-            if (shuffled)
+            // Shuffling changes the [actualPos] of each tile
+            if (updatedTilePos)
             {
-                // Stop shuffling when last tile reached
+                // Reset [justShuffled] when the last tile is reached
                 if (y == verticalTiles - 1 && x == horizontalTiles - 1)
-                    shuffled = false;
+                    updatedTilePos = false;
                 
-                // Set the new actual position on the screen
+                // Set the new actual position on the screen of each tile
                 tilePositions[index].actualPos = (Vector2) {tilePos.x, tilePos.y};
             }
         }
