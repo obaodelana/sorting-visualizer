@@ -9,13 +9,21 @@
 #define RAYGUI_SUPPORT_ICONS
 #include "libs/raygui.h"
 
+// Sort indices
+#define BUBBLESORT 0
+#define COMBSORT 1
+#define SELECTIONSORT 2
+#define DSELECTIONSORT 3
+#define INSERTIONSORT 4
+#define MERGESORT 5
+#define QUICKSORT 6
+
 // Holds dropdown items
 static const char dropDownText[] = "Bubble Sort;Comb Sort;Selection Sort;Double Selection Sort;Insertion Sort;Merge Sort;Quick Sort";
 
 // Current dropdown item
 static int activeSort = 0;
 static bool dropDownOpen = false;
-
 static pthread_t threadID;
 
 // In milliseconds
@@ -30,7 +38,7 @@ static Rectangle randomImageButtonPos = (Rectangle) {30, 30, 30, 30};
 static Rectangle shuffleButtonPos = (Rectangle) {30, screenHeight - 40, 30, 30};
 
 void UpdateDrawFrame(void);
-void CallSort(int algoIndex);
+void CallSort(void);
 
 int main()
 {
@@ -82,12 +90,12 @@ void UpdateDrawFrame(void)
             // Sort options drop down 
             if(GuiDropdownBox(dropDownPos, dropDownText, &activeSort, dropDownOpen))
             {
-                // Disallow interaction when thread started
+                // Disable interaction when thread started
                 if (!threadStarted)
                 {
                     // If the drop down is open, call sort function
                     if (dropDownOpen)
-                        CallSort(activeSort);
+                        CallSort();
                     // Close / open drop down
                     dropDownOpen = !dropDownOpen;
                 }
@@ -100,7 +108,7 @@ void UpdateDrawFrame(void)
     EndDrawing();
 }
 
-void CallSort(int algoIndex)
+void CallSort(void)
 {
     // Disallow from starting a new thread when one has started
     if (!threadStarted)
@@ -111,7 +119,7 @@ void CallSort(int algoIndex)
         void (*SortAlgo) (void*) = BubbleSort;
 
         // Choose algorithm based on index
-        switch (algoIndex)
+        switch (activeSort)
         {
             case COMBSORT:
                 SortAlgo = CombSort;
@@ -140,7 +148,7 @@ void CallSort(int algoIndex)
         
         int *args = NULL;
         // Pass parameters for Merge and Quick Sort only
-        if (algoIndex == MERGESORT || algoIndex == QUICKSORT)
+        if (activeSort == MERGESORT || activeSort == QUICKSORT)
         {
             // Allocate memory for two integers and initialize them to zero
             args = calloc(2, sizeof(int));

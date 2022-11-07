@@ -81,7 +81,6 @@ void StartTimer(void)
     startTime = clock();
 }
 
-// Easier way of setting boxes position and color
 static void SetupBoxes(Vector2 *v, Color *c, int len)
 {
     // Set vectors and colors the amount of times inputted
@@ -488,4 +487,3 @@ void QuickSort(void *arg)
         EndSort();
     }
 }
-//---------------------

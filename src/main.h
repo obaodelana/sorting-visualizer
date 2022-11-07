@@ -16,15 +16,5 @@
 // In milliseconds
 #define maxWaitTime 500
 
-// Sort indices
-#define BUBBLESORT 0
-#define COMBSORT 1
-#define SELECTIONSORT 2
-#define DSELECTIONSORT 3
-#define INSERTIONSORT 4
-#define MERGESORT 5
-#define QUICKSORT 6
-
-// Thread started - sorting started
 extern bool threadStarted, updatedTilePos;
 extern int sortDelay;
