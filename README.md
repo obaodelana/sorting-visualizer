@@ -1,4 +1,9 @@
 # Picture Sorting Visualizer
+
+
+https://user-images.githubusercontent.com/35340328/200291508-de0324d4-1869-4b73-be17-20bcccca70dc.mp4
+
+
 This is a not-so-informative but kind of good loooking sorting visualizer made in C using Raylib. This project was really fun to make and I learnt a lot:
 - Sorting algorithms
 - Function pointers
