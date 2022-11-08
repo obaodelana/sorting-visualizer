@@ -30,3 +30,7 @@ I wrote the sorting functions normally while adding a delay in each iteration. T
 - Insertion sort: From i = 1, it performs a Bubble sort backwards using i as the length of the array. It increases i after each sort until i equals the actual length of the array.
 - Merge sort: Mind-boggling divide and conquer recursive algorithm 🥴. Takes an array and divides it into smaller arrays until the array contains only one item (which is already sorted), it then recursively sorts each array on the stack by merging, because it divides the array into very small chunks each chunk is sorted after merging.
 - Quick sort: Also a divide and conquer recursive algorithm 😑. Picks an element (last element) as the pivot and puts all smaller items on the left and bigger items on the right. It does the same thing for the left and right hand side of the pivot until one item is left on both sides.
+
+## Try it out
+- Download and install [Raylib][https://www.raylib.com/]
+- Type `make`, and run `./picture-sorting-visualizer`
