@@ -1,7 +1,10 @@
 # Picture Sorting Visualizer
 
 
-https://user-images.githubusercontent.com/35340328/200291508-de0324d4-1869-4b73-be17-20bcccca70dc.mp4
+[<img src="http://i3.ytimg.com/vi/nV2XMPYrlmM/hqdefault.jpg" width="50%">](https://youtu.be/nV2XMPYrlmM "Quick Sort")
+
+
+[<img src="http://i3.ytimg.com/vi/v-pNSSIBlfs/hqdefault.jpg" width="50%">](https://youtu.be/v-pNSSIBlfs "Double Selection Sort")
 
 
 https://user-images.githubusercontent.com/35340328/200312845-367fc258-ef24-4ddb-8c4e-ee0ff1bfdb51.mp4
