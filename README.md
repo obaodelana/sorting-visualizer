@@ -1,9 +1,11 @@
 # Picture Sorting Visualizer
 
 [YouTube Link](https://www.youtube.com/watch?v=nV2XMPYrlmM)
+
 https://user-images.githubusercontent.com/35340328/200291508-de0324d4-1869-4b73-be17-20bcccca70dc.mp4
 
 [YouTube Link](https://youtu.be/v-pNSSIBlfs)
+
 https://user-images.githubusercontent.com/35340328/200312845-367fc258-ef24-4ddb-8c4e-ee0ff1bfdb51.mp4
 
 
